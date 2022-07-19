@@ -1,11 +1,15 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import authRoute from './Routes/auth.js'
 
+
+import authRoute from './Routes/auth.js'
+import categoryRoute from './Routes/Admin/category.js'
+import productRoute from './Routes/Admin/products.js'
 
 const app = express();
 dotenv.config();
+
 
 //db connection
 const connect = async () => {
@@ -26,6 +30,8 @@ app.use(express.json())
 
 //routes
 app.use('/api/auth', authRoute)
+app.use('/api/admin', categoryRoute)
+app.use('/api/admin', productRoute)
 
 
 app.use((err, req, res, next) => {

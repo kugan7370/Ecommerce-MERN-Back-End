@@ -19,9 +19,13 @@ const userSchema = new mongoose.Schema({
 
     },
     ConfirmPassword: {
-        type: String
+        type: String,
+        required: true,
 
     },
+    product_id: {
+        type: [String]
+    }
 
 
 },
