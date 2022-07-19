@@ -7,7 +7,7 @@ import authRoute from './Routes/auth.js'
 const app = express();
 dotenv.config();
 
-
+//db connection
 const connect = async () => {
     try {
         await mongoose.connect(process.env.Mongo_Connect);
