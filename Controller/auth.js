@@ -2,92 +2,52 @@ import User from '../models/user.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import env from 'dotenv'
+import { createError } from '../utils/error.js'
 
-export const register = async (req, res) => {
-    const { username, email, Password, ConfirmPassword } = req.body;
-
-
-    // check if already email available or not
-    const existingUser = await User.findOne({ email })
-    if (existingUser) {
-        return res.status(400).json({
-            error: 'user Already exits'
-        })
-    }
-    else {
-
-        if (Password !== ConfirmPassword) {
-
-            return res.status(400).json({
-                error: 'passwords should be same'
-            })
-        }
-        else {
-
-            //change passwor dinto hash password
-            const hashPassword = await bcrypt.hashSync(Password, 10);
+export const register = async (req, res, next) => {
 
 
+    try {
+        const existingUser = await User.findOne({ email: req.body.email })
+        if (existingUser)
+            return next(createError(404, "user already exits"))
 
-            //save into variable
-            const _user = new User({
-                username,
-                email,
-                Password: hashPassword,
 
-            })
+        if (req.body.Password !== req.body.ConfirmPassword)
+            return next(createError(404, "passwords should be same"))
 
-            // save data into database
-            const result = await _user.save()
-            if (!result) {
-                return res.status(400).json({
-                    error: 'message is something wrong'
-                })
-            }
-            else {
-                return res.status(201).json({
-                    message: 'user created successfully'
-                })
-            }
-        }
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(req.body.Password, salt)
+
+        const newUser = new User({ ...req.body, Password: hash });
+        await newUser.save();
+        res.status(200).send("User has been created.");
 
     }
 
+    catch (error) {
+        next(error)
+    }
 }
 
 
 
 
 export const login = async (req, res) => {
-    const { email, Password } = req.body;
 
-    const getUser = await User.findOne({ email })
+    const getUser = await User.findOne({ email: req.body.email })
 
-    if (!getUser) {
+    if (!getUser)
         return res.status(400).json({ message: 'invalid email' });
 
-    }
-    else {
-        const isPasswordCorrect = await bcrypt.compare(Password, getUser.Password)
-        if (isPasswordCorrect) {
-            const token = jwt.sign({ _id: getUser._id }, 'Ecommerce', { expiresIn: '1h' });
-            const { username, email } = getUser;
-            res.status(201).json({
-                token,
-                user: {
-                    username,
-                    email,
+    const isPasswordCorrect = await bcrypt.compare(req.body.Password, getUser.Password)
 
+    if (!isPasswordCorrect)
+        return next(createError(404, "Invalid Password "))
 
-                }
-            })
-        }
-        else {
-            return res.status(400).json({
-                message: 'invalid password'
-            })
-        }
+    const token = jwt.sign({ _id: getUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+    const { Password, ...otherDetails } = getUser._doc;
+    res.status(200).json({ token, user: otherDetails })
 
-    }
 }
