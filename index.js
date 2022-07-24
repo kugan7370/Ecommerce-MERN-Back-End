@@ -6,6 +6,9 @@ import dotenv from 'dotenv'
 import authRoute from './Routes/auth.js'
 import categoryRoute from './Routes/Admin/category.js'
 import productRoute from './Routes/Admin/products.js'
+import userRoute from './Routes/user.js'
+
+import cookieParser from 'cookie-parser'
 
 const app = express();
 dotenv.config();
@@ -25,6 +28,7 @@ const connect = async () => {
 
 //middlewares
 app.use(express.json())
+app.use(cookieParser())
 
 
 
@@ -32,6 +36,7 @@ app.use(express.json())
 app.use('/api/auth', authRoute)
 app.use('/api/admin', categoryRoute)
 app.use('/api/admin', productRoute)
+app.use('/api/user', userRoute)
 
 
 app.use((err, req, res, next) => {
