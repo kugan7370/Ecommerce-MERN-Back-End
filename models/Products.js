@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-    category_id: {
-        type: String,
-        required: true,
-    },
+    category_id: [
+        {
+            type: String,
+            required: true,
+        }
+    ],
     name: {
         type: String,
         required: true,
@@ -25,6 +27,10 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    inStock: {
+        type: Boolean,
+        default: true
+    }
 
 
 

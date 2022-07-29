@@ -18,8 +18,8 @@ export const register = async (req, res, next) => {
 
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(req.body.Password, salt)
-
-        const newUser = new User({ ...req.body, Password: hash });
+        const { ConfirmPassword, ...userdata } = req.body
+        const newUser = new User({ ...userdata, Password: hash });
         await newUser.save();
         res.status(200).send("User has been created.");
 
@@ -33,7 +33,7 @@ export const register = async (req, res, next) => {
 
 
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
 
     const getUser = await User.findOne({ email: req.body.email })
 
