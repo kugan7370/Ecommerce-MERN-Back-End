@@ -38,81 +38,24 @@ export const addBasket = async (req, res, next) => {
 export const getBasket = async (req, res, next) => {
 
     try {
-        const get_password = await Cart.find({ userId: req.user._id })
-        res.status(200).json(get_password)
+        const get_Basket = await Cart.find({ userId: req.user._id })
+        res.status(200).json(get_Basket)
 
     } catch (error) {
         next(error)
     }
 }
 
+export const removebasket = async (req, res, next) => {
 
+    try {
+        const remove_basket = await Cart.deleteOne({ userId: req.user._id, productId: req.params.id })
+        res.status(200).json("item has been removed")
 
-// export const removeBasket = async (req, res, next) => {
-
-//     try {
-//         const items = await user.findOne({ _id: req.user._id, "cartItems.productId": req.params.id })
-//         if (items) {
-//             const add_basket = await user.findByIdAndUpdate(req.user._id, {
-//                 "$pull": {
-//                     "cartItems": {
-//                         productId: req.params.id
-//                     }
-//                 }
-//             })
-//             res.status(200).json('products has beed removed from basket')
-//         }
-
-
-
-
-//     } catch (error) {
-//         next(error)
-//     }
-
-// }
-
-// export const multiAddBasket = async (req, res, next) => {
-
-//     try {
-//         const items = await user.findOne({ _id: req.user._id, "cartItems.productId": req.params.id })
-//         if (items) {
-
-//             const multi_AddBasket = await user.findOneAndUpdate({ _id: req.user._id, "cartItems.productId": req.params.id }, {
-//                 "$inc": {
-//                     "cartItems.$.quantity": 1
-//                 }
-//             })
-//             res.status(200).json('products has beed added to basket')
-//         }
-
-
-//     } catch (error) {
-//         next(error)
-//     }
-
-// }
-
-// export const multiRemoveBasket = async (req, res, next) => {
-
-//     try {
-//         const items = await user.findOne({ _id: req.user._id, "cartItems.productId": req.params.id })
-//         if (items) {
-
-//             const multi_RemoveBasket = await user.findOneAndUpdate({ _id: req.user._id, "cartItems.productId": req.params.id }, {
-//                 "$inc": {
-//                     "cartItems.$.quantity": -1
-//                 }
-//             })
-//             res.status(200).json('products has beed removed to basket')
-//         }
-
-
-//     } catch (error) {
-//         next(error)
-//     }
-
-// }
+    } catch (error) {
+        next(error)
+    }
+}
 
 
 
