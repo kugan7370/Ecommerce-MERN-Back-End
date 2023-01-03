@@ -1,6 +1,8 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import log4js from 'log4js'
+
 
 
 import authRoute from './Routes/auth.js'
@@ -12,6 +14,12 @@ import cookieParser from 'cookie-parser'
 
 const app = express();
 dotenv.config();
+
+//logger confiq
+const logger = log4js.getLogger("ECommerce");
+logger.level = process.env.LOG_LEVEL || 'info'
+
+app.use(log4js.connectLogger(logger, { level: logger.level }));
 
 
 //db connection
@@ -44,7 +52,7 @@ app.use((err, req, res, next) => {
     const errorMessage = err.message || "Something went wrong"
     return res.status(errorStatus).json({
         success: false,
-        status: errorStatus,
+        statusCode: errorStatus,
         message: errorMessage,
         stack: err.stack,
     })

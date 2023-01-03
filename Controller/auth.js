@@ -38,14 +38,14 @@ export const login = async (req, res, next) => {
     const getUser = await User.findOne({ email: req.body.email })
 
     if (!getUser)
-        return res.status(400).json({ message: 'invalid email' });
+        return res.status(422).json({ message: 'invalid email' });
 
     const isPasswordCorrect = await bcrypt.compare(req.body.Password, getUser.Password)
 
     if (!isPasswordCorrect)
-        return next(createError(404, "Invalid Password "))
+        return next(createError(422, "Invalid Password "))
 
-    const token = jwt.sign({ _id: getUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ _id: getUser._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
     const { Password, ...otherDetails } = getUser._doc;
     res.cookie("access_token", token, {

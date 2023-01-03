@@ -30,6 +30,14 @@ const productSchema = new mongoose.Schema({
     inStock: {
         type: Boolean,
         default: true
+    },
+    topProducts: {
+        type: Boolean,
+        default: false
+    },
+    specialProducts: {
+        type: Boolean,
+        default: false
     }
 
 
